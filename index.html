@@ -10,6 +10,7 @@
       margin: 0;
       overflow: hidden;
       background-color: pink;
+      position: relative;
     }
 
     canvas {
@@ -42,28 +43,36 @@
       cursor: pointer;
       border-radius: 5px;
     }
+
+    .background-message {
+      position: absolute;
+      top: 60px;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 
 <body>
+  <div class="background-message">Hit 6 targets for your Valentine's message from Kevani ❤️</div>
   <canvas id="gameCanvas"></canvas>
   <div id="popup" class="popup">
-    ❤️ Happy Valentine's Day Ma! ❤️<br>
-    <button onclick="showMessage()">Click me for a surprise</button>
-    <p id="secretMessage" style="display: none; color: black; font-size: 20px;">❤️ Yuh ass pan ff same way ❤️</p>
+    ❤️ Happy Valentine's Day Britney! ❤️<br>
+    <p style="font-size: 18px; color: black;">Hope you enjoy da gift ya anuh the best because we just start talk and nuh
+      deh yet and me nah work lmao but it better than nth. So Happy Valentine's Day ma! Really wah see how far we ago
+      guh. Hope we talking stage work out and thing, nuh wah seh too much a save some fi when mah ask if you ready fi a
+      relationship lol. Ly punk :) ❤️</p>
   </div>
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const popup = document.getElementById('popup');
-    const secretMessage = document.getElementById('secretMessage');
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
-    function showMessage() {
-      secretMessage.style.display = 'block';
-    }
 
     class Heart {
       constructor(x, y) {
@@ -136,7 +145,7 @@
             hearts.splice(hIndex, 1);
             arrows.splice(aIndex, 1);
             score++;
-            if (score >= 3) {
+            if (score >= 6) {
               popup.style.display = 'block';
             }
           }
@@ -145,15 +154,14 @@
 
       ctx.fillStyle = 'black';
       ctx.font = '20px Arial';
-      ctx.fillText('Score: ' + score, 10, 30);
+      ctx.fillText('Hearts Collected: ' + score, 10, 30);
 
       requestAnimationFrame(updateGame);
     }
 
-    // Touch event to shoot arrows on mobile
     window.addEventListener('touchstart', (event) => {
       const touchX = event.touches[0].clientX;
-      arrows.push(new Arrow(touchX - 2.5, canvas.height - 30));  // Center the arrow on the touch
+      arrows.push(new Arrow(touchX - 2.5, canvas.height - 30));
     });
 
     setInterval(spawnHeart, 1000);
