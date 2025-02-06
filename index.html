@@ -33,6 +33,7 @@
       font-size: 24px;
       color: red;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+      z-index: 10;
     }
 
     .popup button {
@@ -240,6 +241,18 @@
       document.getElementById('message').style.display = 'block';
       clickMeButton.style.display = 'none';
     }
+
+    // Add touch event listener for the "Click me" button
+    clickMeButton.addEventListener('touchstart', function (e) {
+      e.preventDefault(); // Prevent default touch behavior
+      showMessage();
+    });
+
+    // Add click event listener for the "Click me" button
+    clickMeButton.addEventListener('click', function (e) {
+      e.preventDefault(); // Prevent any default click behavior
+      showMessage();
+    });
 
     setInterval(spawnHeart, 800);
   </script>
