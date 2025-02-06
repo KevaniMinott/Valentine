@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Valentine's Shooting Game</title>
+  <title>Britney aka Sweet Voice aka Me Lil Bot Pan ff Valentine's Gift</title>
   <style>
     body {
       margin: 0;
@@ -90,7 +90,7 @@
 
 <body>
   <div class="start-screen" id="startScreen">
-    <h1>Valentine's Shooting Game</h1>
+    <h1>Britney aka Sweet Voice aka Me Lil Bot Pan ff Valentine's Gift</h1>
     <p>Rules: If you let 4 hearts pass the white line, you lose. Shoot 6 hearts to win and unlock your message!</p>
     <button onclick="startGame()">Start Game</button>
   </div>
@@ -100,7 +100,7 @@
 
   <div id="popup" class="popup">
     ❤️ Happy Valentine's Day Britney! ❤️<br>
-    <button onclick="showMessage()">Click me</button>
+    <button id="clickMeButton" onclick="showMessage()">Click me</button>
     <div id="message">
       <p>Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work lmao but it better than nth. So Happy Valentine's Day ma! Really wah see how far we ago guh. Hope we talking stage work out and thing, nuh wah seh too much a save some fi when mah ask if you ready fi a relationship lol. Ly punk :) ❤️</p>
     </div>
@@ -117,6 +117,7 @@
     const popup = document.getElementById('popup');
     const losePopup = document.getElementById('losePopup');
     const startScreen = document.getElementById('startScreen');
+    const clickMeButton = document.getElementById('clickMeButton');
     let missedHearts = 0;
     let score = 0;
     let gameActive = false;
@@ -134,7 +135,6 @@
         this.x = x;
         this.y = y;
         this.size = 30;
-        // Increased speed range to make hearts fall faster
         this.speed = 4 + Math.random() * 4;
       }
       draw() {
@@ -184,7 +184,6 @@
         hearts.forEach((heart, hIndex) => {
           const distance = Math.sqrt(Math.pow(arrow.x - heart.x, 2) + Math.pow(arrow.y - heart.y, 2));
           if (distance < heart.size) {
-            // Arrow hits the heart
             hearts.splice(hIndex, 1); // Remove the heart
             arrows.splice(aIndex, 1); // Remove the arrow
             score++;
@@ -198,16 +197,16 @@
     }
 
     function updateGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       hearts.forEach((heart, hIndex) => {
         heart.update();
         heart.draw();
-        if (heart.y > canvas.height) { // If heart passes the bottom, remove it and increase missed count
+        if (heart.y > canvas.height) {
           hearts.splice(hIndex, 1);
           missedHearts++;
           if (missedHearts >= 4) {
-            losePopup.style.display = 'block'; // Show the lose popup when 4 hearts are missed
+            losePopup.style.display = 'block'; // Show the lose popup
             gameActive = false;
           }
         }
@@ -218,26 +217,31 @@
         arrow.draw();
       });
 
-      checkCollision(); // Check for collisions
+      checkCollision();
 
-      if (gameActive) requestAnimationFrame(updateGame); // Continue the game loop
+      if (gameActive) requestAnimationFrame(updateGame);
     }
 
     window.addEventListener('click', (event) => {
       if (gameActive) {
-        arrows.push(new Arrow(event.clientX - 2.5, canvas.height - 30)); // Create new arrow at click position
+        arrows.push(new Arrow(event.clientX - 2.5, canvas.height - 30));
       }
     });
 
-    // Adding touch support for mobile devices
     window.addEventListener('touchstart', (event) => {
       if (gameActive) {
         const touchX = event.touches[0].clientX;
-        arrows.push(new Arrow(touchX - 2.5, canvas.height - 30)); // Create new arrow at touch position
+        arrows.push(new Arrow(touchX - 2.5, canvas.height - 30));
       }
     });
 
-    setInterval(spawnHeart, 800); // Spawn hearts every 800ms
+    // Show message when button is clicked or touched
+    function showMessage() {
+      document.getElementById('message').style.display = 'block';
+      clickMeButton.style.display = 'none';
+    }
+
+    setInterval(spawnHeart, 800);
   </script>
 </body>
 
