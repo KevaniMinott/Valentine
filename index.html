@@ -9,13 +9,15 @@
     body {
       margin: 0;
       overflow: hidden;
-      background-color: pink;
+      background-color: #ffb6c1;
       position: relative;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
     }
 
     canvas {
       display: block;
-      background-color: lightblue;
+      background-color: #ff8fab;
     }
 
     .popup {
@@ -46,35 +48,83 @@
 
     .background-message {
       position: absolute;
-      top: 60px;
+      top: 20px;
       width: 100%;
       text-align: center;
       font-size: 24px;
-      color: red;
+      color: white;
       font-weight: bold;
+    }
+
+    .start-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: pink;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .start-screen button {
+      padding: 15px;
+      font-size: 20px;
+      background: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
     }
   </style>
 </head>
 
 <body>
-  <div class="background-message">Hit 6 targets for your Valentine's message from Kevani ❤️</div>
+  <div class="start-screen" id="startScreen">
+    <h1>Valentine's Shooting Game</h1>
+    <p>Rules: If you let 4 hearts pass the white line, you lose. Shoot 6 hearts to win and unlock your message!</p>
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <div class="background-message">Hit 6 hearts to unlock your Valentine's message ❤️</div>
   <canvas id="gameCanvas"></canvas>
+
   <div id="popup" class="popup">
     ❤️ Happy Valentine's Day Britney! ❤️<br>
     <button onclick="showMessage()">Click me</button>
-    <p id="secretMessage" style="display: none; font-size: 18px; color: black;">Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work lmao but it better than nth. So Happy Valentine's Day ma! Really wah see how far we ago guh. Hope we talking stage work out and thing, nuh wah seh too much a save some fi when mah ask if you ready fi a relationship lol. Ly punk :) ❤️</p>
+    <div id="message" style="display: none;">
+      <p style="font-size: 18px; color: black;">Hope you enjoy da gift ya anuh the best because we just start talk and
+        nuh
+        deh yet and me nah work lmao but it better than nth. So Happy Valentine's Day ma! Really wah see how far we ago
+        guh. Hope we talking stage work out and thing, nuh wah seh too much a save some fi when mah ask if you ready fi
+        a
+        relationship lol. Ly punk :) ❤️</p>
+    </div>
   </div>
+
+  <div id="losePopup" class="popup">
+    <p>Yuh nuh wah you Valentine message? 😭</p>
+    <button onclick="location.reload()">Play Again</button>
+  </div>
+
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const popup = document.getElementById('popup');
-    const secretMessage = document.getElementById('secretMessage');
+    const losePopup = document.getElementById('losePopup');
+    const startScreen = document.getElementById('startScreen');
+    let missedHearts = 0;
+    let score = 0;
+    let gameActive = false;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    function showMessage() {
-      secretMessage.style.display = 'block';
+    function startGame() {
+      startScreen.style.display = 'none';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gameActive = true;
+      updateGame();
     }
 
     class Heart {
@@ -82,10 +132,10 @@
         this.x = x;
         this.y = y;
         this.size = 30;
-        this.speed = 2;
+        this.speed = 2 + Math.random() * 2;
       }
       draw() {
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = '#ff3366';
         ctx.beginPath();
         ctx.arc(this.x - 10, this.y, this.size / 2, 0, Math.PI * 2);
         ctx.arc(this.x + 10, this.y, this.size / 2, 0, Math.PI * 2);
@@ -118,57 +168,69 @@
 
     const hearts = [];
     const arrows = [];
-    let score = 0;
 
     function spawnHeart() {
-      const x = Math.random() * canvas.width;
-      hearts.push(new Heart(x, 0));
+      if (gameActive) {
+        const x = Math.random() * canvas.width;
+        hearts.push(new Heart(x, 0));
+      }
+    }
+
+    function checkCollision() {
+      arrows.forEach((arrow, aIndex) => {
+        hearts.forEach((heart, hIndex) => {
+          const distance = Math.sqrt(Math.pow(arrow.x - heart.x, 2) + Math.pow(arrow.y - heart.y, 2));
+          if (distance < heart.size) {
+            // Arrow hits the heart
+            hearts.splice(hIndex, 1); // Remove the heart
+            arrows.splice(aIndex, 1); // Remove the arrow
+            score++;
+            if (score >= 6) {
+              popup.style.display = 'block'; // Show the popup when score is 6
+              gameActive = false;
+            }
+          }
+        });
+      });
     }
 
     function updateGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
 
       hearts.forEach((heart, hIndex) => {
         heart.update();
         heart.draw();
-        if (heart.y > canvas.height) {
+        if (heart.y > canvas.height) { // If heart passes the bottom, remove it and increase missed count
           hearts.splice(hIndex, 1);
+          missedHearts++;
+          if (missedHearts >= 4) {
+            losePopup.style.display = 'block'; // Show the lose popup when 4 hearts are missed
+            gameActive = false;
+          }
         }
       });
 
       arrows.forEach((arrow, aIndex) => {
         arrow.update();
         arrow.draw();
-        hearts.forEach((heart, hIndex) => {
-          if (
-            arrow.y < heart.y + 20 &&
-            arrow.x > heart.x - 20 &&
-            arrow.x < heart.x + 20
-          ) {
-            hearts.splice(hIndex, 1);
-            arrows.splice(aIndex, 1);
-            score++;
-            if (score >= 6) {
-              popup.style.display = 'block';
-            }
-          }
-        });
       });
 
-      ctx.fillStyle = 'black';
-      ctx.font = '20px Arial';
-      ctx.fillText('Hearts Collected: ' + score, 10, 30);
+      checkCollision(); // Check for collisions
 
-      requestAnimationFrame(updateGame);
+      if (gameActive) requestAnimationFrame(updateGame); // Continue the game loop
     }
 
-    window.addEventListener('touchstart', (event) => {
-      const touchX = event.touches[0].clientX;
-      arrows.push(new Arrow(touchX - 2.5, canvas.height - 30));
+    window.addEventListener('click', (event) => {
+      if (gameActive) {
+        arrows.push(new Arrow(event.clientX - 2.5, canvas.height - 30)); // Create new arrow at click position
+      }
     });
 
-    setInterval(spawnHeart, 1000);
-    updateGame();
+    setInterval(spawnHeart, 800); // Spawn hearts every 800ms
+
+    function showMessage() {
+      document.getElementById('message').style.display = 'block'; // Show the hidden message
+    }
   </script>
 </body>
 
