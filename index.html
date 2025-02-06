@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Valentines Day Bby <3 </title>
+  <title>Valentine's Shooting Game</title>
   <style>
     body {
       margin: 0;
@@ -78,6 +78,13 @@
       cursor: pointer;
       border-radius: 5px;
     }
+
+    #message {
+      display: none;
+      font-size: 18px;
+      color: black;
+      margin-top: 20px;
+    }
   </style>
 </head>
 
@@ -94,13 +101,8 @@
   <div id="popup" class="popup">
     ❤️ Happy Valentine's Day Britney! ❤️<br>
     <button onclick="showMessage()">Click me</button>
-    <div id="message" style="display: none;">
-      <p style="font-size: 18px; color: black;">Hope you enjoy da gift ya anuh the best because we just start talk and
-        nuh
-        deh yet and me nah work lmao but it better than nth. So Happy Valentine's Day ma! Really wah see how far we ago
-        guh. Hope we talking stage work out and thing, nuh wah seh too much a save some fi when mah ask if you ready fi
-        a
-        relationship lol. Ly punk :) ❤️</p>
+    <div id="message">
+      <p>Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work lmao but it better than nth. So Happy Valentine's Day ma! Really wah see how far we ago guh. Hope we talking stage work out and thing, nuh wah seh too much a save some fi when mah ask if you ready fi a relationship lol. Ly punk :) ❤️</p>
     </div>
   </div>
 
@@ -132,7 +134,8 @@
         this.x = x;
         this.y = y;
         this.size = 30;
-        this.speed = 2 + Math.random() * 2;
+        // Increased speed range to make hearts fall faster
+        this.speed = 4 + Math.random() * 4;
       }
       draw() {
         ctx.fillStyle = '#ff3366';
@@ -226,11 +229,15 @@
       }
     });
 
-    setInterval(spawnHeart, 800); // Spawn hearts every 800ms
+    // Adding touch support for mobile devices
+    window.addEventListener('touchstart', (event) => {
+      if (gameActive) {
+        const touchX = event.touches[0].clientX;
+        arrows.push(new Arrow(touchX - 2.5, canvas.height - 30)); // Create new arrow at touch position
+      }
+    });
 
-    function showMessage() {
-      document.getElementById('message').style.display = 'block'; // Show the hidden message
-    }
+    setInterval(spawnHeart, 800); // Spawn hearts every 800ms
   </script>
 </body>
 
