@@ -103,11 +103,11 @@
     <button id="showMessageButton">Click me</button>
     <div id="message">
       <p>Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work yet lol but
-        it
-        better than nth and next valentine day the gift ago wayyyyyyyy better. So Happy Valentine's Day ma! Really wah
-        see how far we ago guh. Hope we talking stage work out
-        and thing nuh know a wah but me really care bout you fr and we just start talk, nuh wah seh too much a save some
-        fi when mah ask if you ready fi a relationship lol I love You Bby ❤️
+        it better than nth and next valentine day the gift ago wayyyyyyyy better. So Happy Valentine's Day ma! Really
+        wah
+        see how far we ago guh. Hope we talking stage work out and thing nuh know a wah but me really care bout you fr
+        and we just start talk, nuh wah seh too much a save some fi when mah ask if you ready fi a relationship lol I
+        love You Bby ❤️
       </p>
     </div>
   </div>
@@ -118,16 +118,135 @@
   </div>
 
   <script>
+    const startScreen = document.getElementById('startScreen');
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let gameActive = false;
+    let score = 0;
+    let missedHearts = 0;
+    const hearts = [];
+    const arrows = [];
+
+    function startGame() {
+      startScreen.style.display = 'none';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gameActive = true;
+      updateGame();
+    }
+
+    class Heart {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = 30;
+        this.speed = 4 + Math.random() * 4;
+      }
+      draw() {
+        ctx.fillStyle = '#ff3366';
+        ctx.beginPath();
+        ctx.arc(this.x - 10, this.y, this.size / 2, 0, Math.PI * 2);
+        ctx.arc(this.x + 10, this.y, this.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(this.x - 20, this.y);
+        ctx.lineTo(this.x, this.y + 20);
+        ctx.lineTo(this.x + 20, this.y);
+        ctx.fill();
+      }
+      update() {
+        this.y += this.speed;
+      }
+    }
+
+    class Arrow {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.speed = 5;
+      }
+      draw() {
+        ctx.fillStyle = 'brown';
+        ctx.fillRect(this.x, this.y, 5, 20);
+      }
+      update() {
+        this.y -= this.speed;
+      }
+    }
+
+    function spawnHeart() {
+      if (gameActive) {
+        const x = Math.random() * canvas.width;
+        hearts.push(new Heart(x, 0));
+      }
+    }
+
+    function checkCollision() {
+      arrows.forEach((arrow, aIndex) => {
+        hearts.forEach((heart, hIndex) => {
+          const distance = Math.sqrt(Math.pow(arrow.x - heart.x, 2) + Math.pow(arrow.y - heart.y, 2));
+          if (distance < heart.size) {
+            hearts.splice(hIndex, 1);
+            arrows.splice(aIndex, 1);
+            score++;
+            if (score >= 6) {
+              document.getElementById('popup').style.display = 'block';
+              gameActive = false;
+            }
+          }
+        });
+      });
+    }
+
+    function updateGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      hearts.forEach((heart, hIndex) => {
+        heart.update();
+        heart.draw();
+        if (heart.y > canvas.height) {
+          hearts.splice(hIndex, 1);
+          missedHearts++;
+          if (missedHearts >= 4) {
+            document.getElementById('losePopup').style.display = 'block';
+            gameActive = false;
+          }
+        }
+      });
+
+      arrows.forEach((arrow, aIndex) => {
+        arrow.update();
+        arrow.draw();
+      });
+
+      checkCollision();
+
+      if (gameActive) requestAnimationFrame(updateGame);
+    }
+
+    window.addEventListener('click', (event) => {
+      if (gameActive) {
+        arrows.push(new Arrow(event.clientX - 2.5, canvas.height - 30));
+      }
+    });
+
+    window.addEventListener('touchstart', (event) => {
+      if (gameActive) {
+        const touchX = event.touches[0].clientX;
+        arrows.push(new Arrow(touchX - 2.5, canvas.height - 30));
+      }
+    });
+
+    setInterval(spawnHeart, 800);
+
     document.addEventListener("DOMContentLoaded", function () {
       const showMessageButton = document.getElementById('showMessageButton');
       const messageDiv = document.getElementById('message');
 
-      if (showMessageButton) {
-        showMessageButton.addEventListener('click', function () {
-          messageDiv.style.display = 'block';
-          showMessageButton.style.display = 'none';
-        });
-      }
+      showMessageButton.addEventListener('click', function () {
+        messageDiv.style.display = 'block';
+        showMessageButton.style.display = 'none';
+      });
     });
   </script>
 </body>
