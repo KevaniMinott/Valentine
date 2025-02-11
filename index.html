@@ -99,7 +99,7 @@
   <canvas id="gameCanvas"></canvas>
 
   <div id="popup" class="popup">
-    ❤️ Happy Valentine's Day Britney! ❤️<br>
+    ❤️ Happy Valentine's Day Britney ❤️<br>
     <button id="showMessageButton">Click me</button>
     <div id="message">
       <p>Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work yet lol but
@@ -118,60 +118,17 @@
   </div>
 
   <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const popup = document.getElementById('popup');
-    const losePopup = document.getElementById('losePopup');
-    const startScreen = document.getElementById('startScreen');
-    let missedHearts = 0;
-    let score = 0;
-    let gameActive = false;
+    document.addEventListener("DOMContentLoaded", function () {
+      const showMessageButton = document.getElementById('showMessageButton');
+      const messageDiv = document.getElementById('message');
 
-    function startGame() {
-      startScreen.style.display = 'none';
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      gameActive = true;
-      updateGame();
-    }
-
-    document.getElementById('showMessageButton').addEventListener('click', showMessage);
-    document.getElementById('showMessageButton').addEventListener('touchstart', showMessage);
-
-    function showMessage() {
-      document.getElementById('message').style.display = 'block';
-    }
-
-    class Heart {
-      constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.size = 30;
-        this.speed = 4 + Math.random() * 4;
+      if (showMessageButton) {
+        showMessageButton.addEventListener('click', function () {
+          messageDiv.style.display = 'block';
+          showMessageButton.style.display = 'none';
+        });
       }
-      draw() {
-        ctx.fillStyle = '#ff3366';
-        ctx.beginPath();
-        ctx.arc(this.x - 10, this.y, this.size / 2, 0, Math.PI * 2);
-        ctx.arc(this.x + 10, this.y, this.size / 2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(this.x - 20, this.y);
-        ctx.lineTo(this.x, this.y + 20);
-        ctx.lineTo(this.x + 20, this.y);
-        ctx.fill();
-      }
-      update() {
-        this.y += this.speed;
-      }
-    }
-
-    setInterval(() => {
-      if (gameActive) {
-        const x = Math.random() * canvas.width;
-        hearts.push(new Heart(x, 0));
-      }
-    }, 800);
+    });
   </script>
 </body>
 
