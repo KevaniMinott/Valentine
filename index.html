@@ -100,11 +100,14 @@
 
   <div id="popup" class="popup">
     ❤️ Happy Valentine's Day Britney! ❤️<br>
-    <button onclick="showMessage()">Click me</button>
+    <button id="showMessageButton">Click me</button>
     <div id="message">
-      <p>Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work yet lol but it
-        better than nth and next valentine day the gift ago wayyyyyyyy better . So Happy Valentine's Day ma! Really wah see how far we ago guh. Hope we talking stage work out
-        and thing nuh know a wah but me really care bout you fr and we just start talk, nuh wah seh too much a save some fi when mah ask if you ready fi a relationship lol I love You Bby ❤️
+      <p>Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work yet lol but
+        it
+        better than nth and next valentine day the gift ago wayyyyyyyy better. So Happy Valentine's Day ma! Really wah
+        see how far we ago guh. Hope we talking stage work out
+        and thing nuh know a wah but me really care bout you fr and we just start talk, nuh wah seh too much a save some
+        fi when mah ask if you ready fi a relationship lol I love You Bby ❤️
       </p>
     </div>
   </div>
@@ -132,12 +135,18 @@
       updateGame();
     }
 
+    document.getElementById('showMessageButton').addEventListener('click', showMessage);
+    document.getElementById('showMessageButton').addEventListener('touchstart', showMessage);
+
+    function showMessage() {
+      document.getElementById('message').style.display = 'block';
+    }
+
     class Heart {
       constructor(x, y) {
         this.x = x;
         this.y = y;
         this.size = 30;
-        // Increased speed range to make hearts fall faster
         this.speed = 4 + Math.random() * 4;
       }
       draw() {
@@ -157,90 +166,12 @@
       }
     }
 
-    class Arrow {
-      constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.speed = 5;
-      }
-      draw() {
-        ctx.fillStyle = 'brown';
-        ctx.fillRect(this.x, this.y, 5, 20);
-      }
-      update() {
-        this.y -= this.speed;
-      }
-    }
-
-    const hearts = [];
-    const arrows = [];
-
-    function spawnHeart() {
+    setInterval(() => {
       if (gameActive) {
         const x = Math.random() * canvas.width;
         hearts.push(new Heart(x, 0));
       }
-    }
-
-    function checkCollision() {
-      arrows.forEach((arrow, aIndex) => {
-        hearts.forEach((heart, hIndex) => {
-          const distance = Math.sqrt(Math.pow(arrow.x - heart.x, 2) + Math.pow(arrow.y - heart.y, 2));
-          if (distance < heart.size) {
-            // Arrow hits the heart
-            hearts.splice(hIndex, 1); // Remove the heart
-            arrows.splice(aIndex, 1); // Remove the arrow
-            score++;
-            if (score >= 6) {
-              popup.style.display = 'block'; // Show the popup when score is 6
-              gameActive = false;
-            }
-          }
-        });
-      });
-    }
-
-    function updateGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-
-      hearts.forEach((heart, hIndex) => {
-        heart.update();
-        heart.draw();
-        if (heart.y > canvas.height) { // If heart passes the bottom, remove it and increase missed count
-          hearts.splice(hIndex, 1);
-          missedHearts++;
-          if (missedHearts >= 4) {
-            losePopup.style.display = 'block'; // Show the lose popup when 4 hearts are missed
-            gameActive = false;
-          }
-        }
-      });
-
-      arrows.forEach((arrow, aIndex) => {
-        arrow.update();
-        arrow.draw();
-      });
-
-      checkCollision(); // Check for collisions
-
-      if (gameActive) requestAnimationFrame(updateGame); // Continue the game loop
-    }
-
-    window.addEventListener('click', (event) => {
-      if (gameActive) {
-        arrows.push(new Arrow(event.clientX - 2.5, canvas.height - 30)); // Create new arrow at click position
-      }
-    });
-
-    // Adding touch support for mobile devices
-    window.addEventListener('touchstart', (event) => {
-      if (gameActive) {
-        const touchX = event.touches[0].clientX;
-        arrows.push(new Arrow(touchX - 2.5, canvas.height - 30)); // Create new arrow at touch position
-      }
-    });
-
-    setInterval(spawnHeart, 800); // Spawn hearts every 800ms
+    }, 800);
   </script>
 </body>
 
