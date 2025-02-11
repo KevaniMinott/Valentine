@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Britney aka Sweet Voice aka Me Lil Bot Pan ff Valentine's Gift</title>
+  <title>Valentine's Shooting Game</title>
   <style>
     body {
       margin: 0;
@@ -33,7 +33,6 @@
       font-size: 24px;
       color: red;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-      z-index: 10;
     }
 
     .popup button {
@@ -91,7 +90,7 @@
 
 <body>
   <div class="start-screen" id="startScreen">
-    <h1>Britney aka Sweet Voice aka Me Lil Bot Pan ff Valentine's Gift</h1>
+    <h1>Valentine's Shooting Game</h1>
     <p>Rules: If you let 4 hearts pass the white line, you lose. Shoot 6 hearts to win and unlock your message!</p>
     <button onclick="startGame()">Start Game</button>
   </div>
@@ -101,9 +100,12 @@
 
   <div id="popup" class="popup">
     ❤️ Happy Valentine's Day Britney! ❤️<br>
-    <button id="clickMeButton" onclick="showMessage()">Click me</button>
+    <button onclick="showMessage()">Click me</button>
     <div id="message">
-      <p>Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work lmao but it better than nth. So Happy Valentine's Day ma! Really wah see how far we ago guh. Hope we talking stage work out and thing, nuh wah seh too much a save some fi when mah ask if you ready fi a relationship lol. Ly punk :) ❤️</p>
+      <p>Hope you enjoy da gift ya anuh the best because we just start talk and nuh deh yet and me nah work yet lol but it
+        better than nth and next valentine day the gift ago wayyyyyyyy better . So Happy Valentine's Day ma! Really wah see how far we ago guh. Hope we talking stage work out
+        and thing nuh know a wah but me really care bout you fr and we just start talk, nuh wah seh too much a save some fi when mah ask if you ready fi a relationship lol I love You Bby ❤️
+      </p>
     </div>
   </div>
 
@@ -118,7 +120,6 @@
     const popup = document.getElementById('popup');
     const losePopup = document.getElementById('losePopup');
     const startScreen = document.getElementById('startScreen');
-    const clickMeButton = document.getElementById('clickMeButton');
     let missedHearts = 0;
     let score = 0;
     let gameActive = false;
@@ -136,6 +137,7 @@
         this.x = x;
         this.y = y;
         this.size = 30;
+        // Increased speed range to make hearts fall faster
         this.speed = 4 + Math.random() * 4;
       }
       draw() {
@@ -185,6 +187,7 @@
         hearts.forEach((heart, hIndex) => {
           const distance = Math.sqrt(Math.pow(arrow.x - heart.x, 2) + Math.pow(arrow.y - heart.y, 2));
           if (distance < heart.size) {
+            // Arrow hits the heart
             hearts.splice(hIndex, 1); // Remove the heart
             arrows.splice(aIndex, 1); // Remove the arrow
             score++;
@@ -198,16 +201,16 @@
     }
 
     function updateGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
 
       hearts.forEach((heart, hIndex) => {
         heart.update();
         heart.draw();
-        if (heart.y > canvas.height) {
+        if (heart.y > canvas.height) { // If heart passes the bottom, remove it and increase missed count
           hearts.splice(hIndex, 1);
           missedHearts++;
           if (missedHearts >= 4) {
-            losePopup.style.display = 'block'; // Show the lose popup
+            losePopup.style.display = 'block'; // Show the lose popup when 4 hearts are missed
             gameActive = false;
           }
         }
@@ -218,43 +221,26 @@
         arrow.draw();
       });
 
-      checkCollision();
+      checkCollision(); // Check for collisions
 
-      if (gameActive) requestAnimationFrame(updateGame);
+      if (gameActive) requestAnimationFrame(updateGame); // Continue the game loop
     }
 
     window.addEventListener('click', (event) => {
       if (gameActive) {
-        arrows.push(new Arrow(event.clientX - 2.5, canvas.height - 30));
+        arrows.push(new Arrow(event.clientX - 2.5, canvas.height - 30)); // Create new arrow at click position
       }
     });
 
+    // Adding touch support for mobile devices
     window.addEventListener('touchstart', (event) => {
       if (gameActive) {
         const touchX = event.touches[0].clientX;
-        arrows.push(new Arrow(touchX - 2.5, canvas.height - 30));
+        arrows.push(new Arrow(touchX - 2.5, canvas.height - 30)); // Create new arrow at touch position
       }
     });
 
-    // Show message when button is clicked or touched
-    function showMessage() {
-      document.getElementById('message').style.display = 'block';
-      clickMeButton.style.display = 'none';
-    }
-
-    // Add touch event listener for the "Click me" button
-    clickMeButton.addEventListener('touchstart', function (e) {
-      e.preventDefault(); // Prevent default touch behavior
-      showMessage();
-    });
-
-    // Add click event listener for the "Click me" button
-    clickMeButton.addEventListener('click', function (e) {
-      e.preventDefault(); // Prevent any default click behavior
-      showMessage();
-    });
-
-    setInterval(spawnHeart, 800);
+    setInterval(spawnHeart, 800); // Spawn hearts every 800ms
   </script>
 </body>
 
